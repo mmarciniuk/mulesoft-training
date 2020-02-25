@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="69ce1d22-c51f-4bfd-9804-b6eb7de580b7" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="77facf58-3289-4326-9f92-50fe36ee629a" >
+		<db:my-sql-connection host="mudb.learn.mulesoft.com" port="3306" user="mule" password="mule" database="training" />
+	</db:config>
+	<flow name="getFlights" doc:id="ce79d472-be2f-4ab5-b222-8adf9fe00a9f" >
+		<http:listener doc:name="Listener" doc:id="ff2c0af6-e1ed-41a8-b920-6779bedc69d2" config-ref="HTTP_Listener_config" path="/flights"/>
+		<db:select doc:name="Select" doc:id="3ae7333a-e7f2-4682-9d52-80e6f7cda441" config-ref="Database_Config">
+			<db:sql >SELECT *
+FROM american</db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="715fbadd-63ae-49a6-8419-18c44082a31c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ((item, index) -> {
+	ID: item.ID,
+	code: (item.code1 default "") ++ (item.code2 default ""),
+	price: item.price default null,
+	departurDate: item.takeOffDate as String default "",
+	origin: item.fromAirport default "",
+	destination: item.toAirport default "",
+	emptySeats: item.seatsAvailable default 0,
+	plane: {
+		"type": item.planeType default "",
+		totalSeats: item.totalSeats default 0
+	}
+})]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

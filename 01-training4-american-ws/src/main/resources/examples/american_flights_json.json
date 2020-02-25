@@ -1,0 +1,13 @@
+{
+    "ID": 1,
+    "code": "0001",
+    "price": 541,
+    "departurDate": "2016-01-20T01:00:00",
+    "origin": "MUA",
+    "destination": "LAX",
+    "emptySeats": 12,
+    "plane": {
+        "type": "Boeing 787",
+        "totalSeats": 200
+    }
+}
