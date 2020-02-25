@@ -60,6 +60,19 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.16</version>
         </dependency>
+    	<dependency>
+            <groupId>9e93cd41-331a-476b-b9ee-532ea9b1eeb7</groupId>
+            <artifactId>helloramlamericanflightsapi</artifactId>
+            <version>1.0.1</version>
+            <classifier>raml</classifier>
+            <type>zip</type>
+        </dependency>
+    	<dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-apikit-module</artifactId>
+            <version>1.3.7</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
     </dependencies>
 
 	<repositories>

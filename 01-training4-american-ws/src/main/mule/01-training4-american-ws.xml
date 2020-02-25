@@ -13,7 +13,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<db:my-sql-connection host="mudb.learn.mulesoft.com" port="3306" user="mule" password="mule" database="training" />
 	</db:config>
 	<flow name="getFlights" doc:id="ce79d472-be2f-4ab5-b222-8adf9fe00a9f" >
-		<http:listener doc:name="Listener" doc:id="ff2c0af6-e1ed-41a8-b920-6779bedc69d2" config-ref="HTTP_Listener_config" path="/flights"/>
+		<http:listener doc:name="Listener" doc:id="ff2c0af6-e1ed-41a8-b920-6779bedc69d2" config-ref="HTTP_Listener_config" path="/flights" allowedMethods="GET"/>
 		<db:select doc:name="Select" doc:id="3ae7333a-e7f2-4682-9d52-80e6f7cda441" config-ref="Database_Config">
 			<db:sql >SELECT *
 FROM american</db:sql>
@@ -38,5 +38,38 @@ payload map ((item, index) -> {
 })]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+	</flow>
+	<flow name="getFlightsById" doc:id="84b85291-6e13-4b9b-86ec-bf7347b0ae22" >
+		<http:listener doc:name="Copy_of_Listener" doc:id="7077113e-547e-4976-b86d-baf1787b0538" config-ref="HTTP_Listener_config" path="/flights/{Id}" allowedMethods="GET" />
+		<db:select doc:name="Copy_of_Select" doc:id="b9728fac-eb14-4a53-9d8d-198e638b578f" config-ref="Database_Config" >
+			<db:sql >SELECT *
+FROM american
+WHERE ID = :Id</db:sql>
+			<db:input-parameters ><![CDATA[#[{'Id': attributes.uriParams.Id}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="067f28c8-db87-4b6b-adae-cea2c73886b1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ((item, index) -> {
+	ID: item.ID,
+	code: (item.code1 default "") ++ (item.code2 default ""),
+	price: item.price default null,
+	departurDate: item.takeOffDate as String default "",
+	origin: item.fromAirport default "",
+	destination: item.toAirport default "",
+	emptySeats: item.seatsAvailable default 0,
+	plane: {
+		"type": item.planeType default "",
+		totalSeats: item.totalSeats default 0
+	}
+})]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="postFlight" doc:id="65b117d2-7090-4cdd-af13-581803c8b878" >
+		<http:listener doc:name="Listener" doc:id="22d25ef2-af3f-48a1-8247-8cdee75e775f" config-ref="HTTP_Listener_config" path="/flights" allowedMethods="POST"/>
+		<set-payload value='{"message": "Flight added (but not really)"}' doc:name="Set Payload" doc:id="d66bc3a7-1dc8-4c7f-be82-6d98ecda7c47" />
 	</flow>
 </mule>
