@@ -13,7 +13,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<db:my-sql-connection host="mudb.learn.mulesoft.com" port="3306" user="mule" password="mule" database="training" />
 	</db:config>
 	<flow name="getFlights" doc:id="ce79d472-be2f-4ab5-b222-8adf9fe00a9f" >
-		<http:listener doc:name="Listener" doc:id="ff2c0af6-e1ed-41a8-b920-6779bedc69d2" config-ref="HTTP_Listener_config" path="/flights" allowedMethods="GET"/>
+		<http:listener doc:name="Listener" doc:id="ff2c0af6-e1ed-41a8-b920-6779bedc69d2" config-ref="HTTP_Listener_config" path="/flights" allowedMethods="GET" />
 		<db:select doc:name="Select" doc:id="3ae7333a-e7f2-4682-9d52-80e6f7cda441" config-ref="Database_Config">
 			<db:sql >SELECT *
 FROM american</db:sql>
